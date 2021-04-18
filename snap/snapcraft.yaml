@@ -1,0 +1,33 @@
+name: h264-dvr-rce
+base: core18
+version: master-20160328-231d98b
+summary: Remote Code Execution in CCTV-DVR affecting over 70 different vendors
+description: |
+  Refer the following blog post for more information:
+
+  Kerner on Security: Remote Code Execution in CCTV-DVR affecting over 70 different vendors  
+  http://www.kerneronsec.com/2016/02/remote-code-execution-in-cctv-dvrs-of.html
+
+grade: stable
+confinement: strict
+
+parts:
+  main:
+    source: https://github.com/k1p0d/h264_dvr_rce.git
+    source-commit: 231d98b0fa190ff2070588af3ea503c1ee1a727c
+    plugin: dump
+    stage-packages:
+      #- python-minimal
+      - python-requests
+    organize:
+      h264-dvr-rce.py: bin/h264-dvr-rce
+    override-prime: |
+      set -o nounset
+      snapcraftctl prime
+      chmod +x ${SNAPCRAFT_PRIME}/bin/h264-dvr-rce
+
+apps:
+  h264-dvr-rce:
+    command: python $SNAP/bin/h264-dvr-rce
+    plugs:
+      - network
